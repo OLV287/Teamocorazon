@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Universo de Partículas - Te Amo</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<audio id="audio" autoplay loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  Tu navegador no soporta audio HTML5.
+</audio>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const PARTICLE_COUNT = 1000;
+const STAR_COUNT = 200;
+const particles = [];
+const heartShape = [];
+const stars = [];
+
+function heartFunction(t) {
+  const x = 16 * Math.pow(Math.sin(t), 3);
+  const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+  return [x, -y];
+}
+
+// Generar estrellas de fondo
+for (let i = 0; i < STAR_COUNT; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 1.5 + 0.5,
+    alpha: Math.random(),
+    speed: Math.random() * 0.002 + 0.001
+  });
+}
+
+// Generate target positions for heart shape
+for (let i = 0; i < 1000; i++) {
+  const t = Math.PI * 2 * (i / 1000);
+  const [x, y] = heartFunction(t);
+  heartShape.push({
+    x: x * 20 + canvas.width / 2,
+    y: y * 20 + canvas.height / 2 - 50
+  });
+}
+
+// Create particles
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: 0,
+    vy: 0,
+    tx: heartShape[i].x,
+    ty: heartShape[i].y
+  });
+}
+
+let frameCount = 0;
+function animate() {
+  frameCount++;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Dibujar estrellas
+  for (let s of stars) {
+    s.alpha += s.speed * (Math.random() > 0.5 ? 1 : -1);
+    if (s.alpha < 0.1) s.alpha = 0.1;
+    if (s.alpha > 1) s.alpha = 1;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+    ctx.fill();
+  }
+
+  // Dibujar partículas
+  for (let p of particles) {
+    const dx = p.tx - p.x;
+    const dy = p.ty - p.y;
+    p.vx += dx * 0.0003;
+    p.vy += dy * 0.0003;
+    p.vx *= 0.96;
+    p.vy *= 0.96;
+    p.x += p.vx;
+    p.y += p.vy;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 0, 100, 1)';
+    ctx.fill();
+  }
+
+  if (frameCount > 300) {
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 80px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('TE AMO', canvas.width / 2, canvas.height / 2 - 30);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
