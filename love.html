@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lluvia de Amor</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .letter {
+            position: absolute;
+            top: -50px;
+            left: Math.random() * window.innerWidth;
+            font-size: 24px;
+            color: #ff00ff;
+            opacity: 0.8;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <audio autoplay loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        const lovePhrases = [
+            'Te amo',
+            'Eres mi todo',
+            'Mi amor por ti es infinito',
+            'Pienso en ti siempre',
+            'Eres la luz de mi vida',
+            'Mi corazón es tuyo',
+            'Contigo todo es mejor'
+        ];
+
+        function createLetter() {
+            const letter = document.createElement('div');
+            letter.classList.add('letter');
+            letter.textContent = lovePhrases[Math.floor(Math.random() * lovePhrases.length)];
+            letter.style.left = `${Math.random() * window.innerWidth}px`;
+            letter.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            letter.style.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+            document.body.appendChild(letter);
+
+            letter.animate([
+                { top: '-50px', opacity: 1 },
+                { top: `${window.innerHeight + 50}px`, opacity: 0 }
+            ], {
+                duration: parseFloat(letter.style.animationDuration) * 1000,
+                easing: 'linear'
+            }).onfinish = () => {
+                letter.remove();
+            };
+        }
+
+        setInterval(createLetter, 300);
+    </script>
+</body>
+</html>
